@@ -1,7 +1,6 @@
 package convos.controller;
 
 import convos.domain.Convo;
-import convos.domain.ConvosResponse;
 import convos.domain.CreateConvo;
 import convos.service.ConvoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,27 +16,27 @@ public class Controller
     @Autowired ConvoService convoService;
 
     @RequestMapping(value = "/api/v1/convos", method = RequestMethod.POST)
-    public long createConvo(@RequestBody CreateConvo convo) {
+    public long createConvo(@RequestBody final CreateConvo convo) {
         return convoService.createConvo(convo, null);
     }
 
     @RequestMapping(value = "/api/v1/convos/{id}/replies", method = RequestMethod.POST)
-    public long replyToConvo(@PathVariable long id, @RequestBody CreateConvo convo) {
+    public long replyToConvo(@PathVariable final long id, @RequestBody final CreateConvo convo) {
         return convoService.createConvo(convo, id);
     }
 
     @RequestMapping(value = "/api/v1/convos/{id}", method = RequestMethod.GET)
-    public Convo getConvo(@PathVariable long id) {
+    public Convo getConvo(@PathVariable final long id) {
         return convoService.getConvo(id);
     }
 
     @RequestMapping(value = "/api/v1/convos/{id}", method = RequestMethod.DELETE)
-    public void deleteConvo(@PathVariable long id) {
+    public void deleteConvo(@PathVariable final long id) {
         convoService.deleteConvo(id);
     }
 
     @RequestMapping(value = "/api/v1/convos/{id}", method = RequestMethod.PUT)
-    public void markConvoAsRead(@PathVariable long id) {
-        convoService.markConvoAsReady(id);
+    public void markConvoAsRead(@PathVariable final long id) {
+        convoService.changeConvoReadStatus(id);
     }
 }

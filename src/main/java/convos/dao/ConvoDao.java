@@ -15,6 +15,12 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Data Access Object for maniuplating the convo DB in Postgres.
+ *
+ * Intention is to keep these methods as simple as possible, and handle any extra
+ * logic in the Service layer.
+ */
 @Repository
 public class ConvoDao
 {
@@ -25,15 +31,15 @@ public class ConvoDao
         @Override
         public Convo mapRow(ResultSet rs, int rowNum) throws SQLException
         {
-            long id = rs.getLong("id");
-            long sender = rs.getLong("sender");
-            long recipient = rs.getLong("recipient");
-            String subject = rs.getString("subject");
-            String body = rs.getString("body");
-            boolean wasRead = rs.getBoolean("was_read");
-            long threadId = rs.getLong("thread_id");
-            DateTime sendTime = new DateTime(rs.getTimestamp("send_time"));
-            DateTime updateTime = new DateTime(rs.getTimestamp("update_time"));
+            final long id = rs.getLong("id");
+            final long sender = rs.getLong("sender");
+            final long recipient = rs.getLong("recipient");
+            final String subject = rs.getString("subject");
+            final String body = rs.getString("body");
+            final boolean wasRead = rs.getBoolean("was_read");
+            final long threadId = rs.getLong("thread_id");
+            final DateTime sendTime = new DateTime(rs.getTimestamp("send_time"));
+            final DateTime updateTime = new DateTime(rs.getTimestamp("update_time"));
             Long replyToConvo = rs.getLong("reply_to_convo");
             if (rs.wasNull()) {
                 replyToConvo = null;
@@ -42,7 +48,12 @@ public class ConvoDao
         }
     };
 
-    public Convo getConvo(long id)
+    /**
+     * Get convo from DB based on unique ID
+     * @param id
+     * @return The convo object
+     */
+    public Convo getConvo(final long id)
     {
         final String sql =
                 "SELECT id, sender, recipient, subject, body, was_read, thread_id, reply_to_convo," +
@@ -57,7 +68,16 @@ public class ConvoDao
         return jdbcTemplate.queryForObject(sql, params, convoMapper);
     }
 
-    public long createConvo(CreateConvo convo, Long replyToConvo) {
+    /**
+     * Create a new convo, optionally in reply to another convo, based on ID.
+     * @param convo The new convo you want to create
+     * @param replyToConvo The convo you are replying to. If null, creates a new convo
+     *                     in a new thread. If not null, marks new convo as a reply,
+     *                     part of the same thread as the replied-to convo, and uses
+     *                     the subject from that convo.
+     * @return The new unique ID for the convo.
+     */
+    public long createConvo(final CreateConvo convo, final Long replyToConvo) {
         final String sql =
                 "INSERT INTO convo.convo(sender, recipient, subject, body, thread_id, reply_to_convo) " +
                 "VALUES (:sender, :recipient, " +
@@ -83,31 +103,41 @@ public class ConvoDao
         return jdbcTemplate.queryForObject(sql, params, Long.class);
     }
 
-    public void markConvoAsReady(long id) {
+    /**
+     * Switch convo from read to un-read, whichever one it is not, based on ID.
+     * @param id Unique id of the convo
+     */
+    public void changeConvoReadStatus(final long id) {
+        final String sql =
+                "UPDATE convo.convo SET was_read = not was_read " +
+                "WHERE id = :id";
+        final Map<String, Object> params =
+                ImmutableMap.of("id", (Object)id);
+
+        jdbcTemplate.update(sql, params);
+    }
+
+    public void deleteConvo(final long id) {
 
     }
 
-    public void deleteConvo(long id) {
-
-    }
-
-    public ConvosResponse getConvosReceived(long userId, int offset, int limit, String order) {
+    public ConvosResponse getConvosReceived(final long userId, final int offset, final int limit, final String order) {
         return null;
     }
 
-    public ConvosResponse getConvosSent(long userId, int offset, int limit, String order) {
+    public ConvosResponse getConvosSent(final long userId, final int offset, final int limit, final String order) {
         return null;
     }
 
-    public List<List<Convo>> getThreads(long userId, int offset, int limit, String order) {
+    public List<List<Convo>> getThreads(final long userId, final int offset, final int limit, final String order) {
         return null;
     }
 
-    public void deleteThread(long threadId) {
+    public void deleteThread(final long threadId) {
 
     }
 
-    public List<Convo> getThread(long threadId)
+    public List<Convo> getThread(final long threadId)
     {
         return null;
     }
