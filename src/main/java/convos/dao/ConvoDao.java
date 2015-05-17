@@ -134,7 +134,7 @@ public class ConvoDao
      */
     public void changeConvoReadStatus(final long id) {
         final String sql =
-                "UPDATE convo.convo SET was_read = not was_read " +
+                "UPDATE convo.convo SET was_read = not was_read, update_time = now() " +
                 "WHERE id = :id";
         final Map<String, Object> params =
                 ImmutableMap.of("id", (Object)id);
