@@ -4,6 +4,8 @@ import convos.dao.ConvoDao;
 import convos.domain.Convo;
 import convos.domain.ConvosResponse;
 import convos.domain.CreateConvo;
+import convos.domain.SortDirection;
+import convos.domain.ThreadsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +20,25 @@ public class ConvoService
     @Autowired ConvoDao convoDao;
 
     /**
-     * Get a convo based on its unique ID.
-     * @param id
+     * Get a convo based on its unique ID, and given userId is the sender.
+     * @param userId
+     * @param convoId
      * @return
      */
-    public Convo getConvo(final long id)
+    public Convo getSentConvo(final long userId, final long convoId)
     {
-        return convoDao.getConvo(id);
+        return convoDao.getSentConvo(userId, convoId);
+    }
+
+    /**
+     * Get a convo based on its unique ID, and given userId is the recipient.
+     * @param userId
+     * @param convoId
+     * @return
+     */
+    public Convo getReceivedConvo(final long userId, final long convoId)
+    {
+        return convoDao.getReceivedConvo(userId, convoId);
     }
 
     /**
@@ -50,30 +64,47 @@ public class ConvoService
 
     /**
      * Mark given convo as deleted.
-     * @param id
+     * @param userId
+     * @param convoId
      */
-    public void deleteConvo(final long id) {
-        convoDao.deleteConvo(id);
+    public void deleteConvo(final long userId, final long convoId) {
+        convoDao.deleteConvo(userId, convoId);
     }
 
-    public ConvosResponse getConvosReceived(final long userId, final int offset, final int limit, final String order) {
-        return convoDao.getConvosReceived(userId, offset, limit, order);
+    public ConvosResponse getConvosReceived(final long userId, final int offset, final int limit, final SortDirection order) {
+        int total = convoDao.getTotalConvosReceived(userId);
+        List<Convo> convos = convoDao.getConvosReceived(userId, offset, limit, order);
+        return new ConvosResponse(total, convos, offset,
+                String.format("/api/v1/%d/convos/received?offset=%d&limit=%d", userId, offset + limit, limit),
+                String.format("/api/v1/%d/convos/received?offset=%d&limit=%d", userId, Math.max(0, offset - limit), limit));
     }
 
-    public ConvosResponse getConvosSent(final long userId, final int offset, final int limit, final String order) {
-        return convoDao.getConvosSent(userId, offset, limit, order);
+    public ConvosResponse getConvosSent(final long userId, final int offset, final int limit, final SortDirection order) {
+        int total = convoDao.getTotalConvosSent(userId);
+        List<Convo> convos = convoDao.getConvosSent(userId, offset, limit, order);
+        return new ConvosResponse(total, convos, offset,
+                String.format("/api/v1/%d/convos/sent?offset=%d&limit=%d", userId, offset + limit, limit),
+                String.format("/api/v1/%d/convos/sent?offset=%d&limit=%d", userId, Math.max(0, offset - limit), limit));
     }
 
-    public List<List<Convo>> getThreads(final long userId, final int offset, final int limit, final String order) {
-        return null;
+    public ThreadsResponse getThreads(final long userId, final int offset, final int limit, final SortDirection order) {
+        int total = convoDao.getTotalThreads(userId);
+        List<Convo> convos = convoDao.getThreads(userId, offset, limit, order);
+        return new ThreadsResponse(total, convos, offset,
+                String.format("/api/v1/%d/threads?offset=%d&limit=%d", userId, offset + limit, limit),
+                String.format("/api/v1/%d/threads?offset=%d&limit=%d", userId, Math.max(0, offset - limit), limit));
     }
 
-    public void deleteThread(final long threadId) {
-
+    public void deleteThread(final long userId, final long threadId) {
+        convoDao.deleteThread(userId, threadId);
     }
 
-    public List<Convo> getThread(final long threadId)
+    public ConvosResponse getThread(final long userId, final long threadId, final int offset, final int limit, final SortDirection order)
     {
-        return null;
+        int total = convoDao.getTotalInThread(userId, threadId);
+        List<Convo> convos = convoDao.getThread(userId, threadId, offset, limit, order);
+        return new ConvosResponse(total, convos, offset,
+                String.format("/api/v1/%d/threads/%d?offset=%d&limit=%d", userId, threadId, offset + limit, limit),
+                String.format("/api/v1/%d/threads/%d?offset=%d&limit=%d", userId, threadId, Math.max(0, offset - limit), limit));
     }
 }

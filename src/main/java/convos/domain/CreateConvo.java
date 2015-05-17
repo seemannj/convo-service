@@ -10,6 +10,9 @@ public class CreateConvo
     private final String subject;
     private final String body;
 
+    private static final int MAX_SUBJECT_LENGTH = 140;
+    private static final int MAX_BODY_LENGTH = 64000;
+
     @JsonCreator
     public CreateConvo(
             @JsonProperty("sender") long sender,
@@ -19,7 +22,13 @@ public class CreateConvo
     {
         this.sender = sender;
         this.recipient = recipient;
+        if (subject.length() > MAX_SUBJECT_LENGTH) {
+            throw new IllegalArgumentException(String.format("Subject can be at most %d characters long.", MAX_SUBJECT_LENGTH));
+        }
         this.subject = subject;
+        if (body.length() > MAX_BODY_LENGTH) {
+            throw new IllegalArgumentException(String.format("Body can be at most %d characters long.", MAX_BODY_LENGTH));
+        }
         this.body = body;
     }
 

@@ -5,12 +5,12 @@ import java.util.List;
 public class ThreadsResponse
 {
     private final int total;
-    private final List<List<Convo>> convos;
+    private final List<Convo> convos;
     private final int offset;
     private final String next;
     private final String previous;
 
-    public ThreadsResponse(int total, List<List<Convo>> convos, int offset, String next, String previous)
+    public ThreadsResponse(int total, List<Convo> convos, int offset, String next, String previous)
     {
         this.total = total;
         this.convos = convos;
@@ -24,7 +24,7 @@ public class ThreadsResponse
         return total;
     }
 
-    public List<List<Convo>> getConvos()
+    public List<Convo> getConvos()
     {
         return convos;
     }
