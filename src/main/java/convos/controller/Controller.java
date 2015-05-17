@@ -52,26 +52,27 @@ public class Controller
     }
 
     @RequestMapping(value = "/api/v1/{userId}/convos/sent", method = RequestMethod.GET)
-    public ConvosResponse getConvosSent(@PathVariable final long userId, @RequestParam final int offset,
-                                        @RequestParam final int limit, @RequestParam final SortDirection direction) {
+    public ConvosResponse getConvosSent(@PathVariable final long userId, @RequestParam(defaultValue = "0") final int offset,
+                                        @RequestParam(defaultValue = "0") final int limit, @RequestParam(defaultValue = "desc") final SortDirection direction) {
         return convoService.getConvosSent(userId, offset, limit, direction);
     }
 
     @RequestMapping(value = "/api/v1/{userId}/convos/received", method = RequestMethod.GET)
-    public ConvosResponse getConvosReceived(@PathVariable final long userId, @RequestParam final int offset,
-                                        @RequestParam final int limit, @RequestParam final SortDirection direction) {
+    public ConvosResponse getConvosReceived(@PathVariable final long userId, @RequestParam(defaultValue = "0") final int offset,
+                                        @RequestParam(defaultValue = "0") final int limit, @RequestParam(defaultValue = "desc") final SortDirection direction) {
         return convoService.getConvosReceived(userId, offset, limit, direction);
     }
 
     @RequestMapping(value = "/api/v1/{userId}/threads", method = RequestMethod.GET)
-    public ThreadsResponse getThreads(@PathVariable final long userId, @RequestParam final int offset,
-                                      @RequestParam final int limit, @RequestParam final SortDirection direction) {
+    public ThreadsResponse getThreads(@PathVariable final long userId, @RequestParam(defaultValue = "0") final int offset,
+                                      @RequestParam(defaultValue = "0") final int limit, @RequestParam(defaultValue = "desc") final SortDirection direction) {
         return convoService.getThreads(userId, offset, limit, direction);
     }
 
     @RequestMapping(value = "/api/v1/{userId}/threads/{threadId}", method = RequestMethod.GET)
-    public ConvosResponse getThread(@PathVariable final long userId, @PathVariable final long threadId, @RequestParam final int offset,
-                                    @RequestParam final int limit, @RequestParam final SortDirection direction) {
+    public ConvosResponse getThread(@PathVariable final long userId, @PathVariable final long threadId,
+                                    @RequestParam(defaultValue = "0") final int offset, @RequestParam(defaultValue = "0") final int limit,
+                                    @RequestParam(defaultValue = "desc") final SortDirection direction) {
         return convoService.getThread(userId, threadId, offset, limit, direction);
     }
 

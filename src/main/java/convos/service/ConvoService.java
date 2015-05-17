@@ -71,40 +71,40 @@ public class ConvoService
         convoDao.deleteConvo(userId, convoId);
     }
 
-    public ConvosResponse getConvosReceived(final long userId, final int offset, final int limit, final SortDirection order) {
+    public ConvosResponse getConvosReceived(final long userId, final int offset, final int limit, final SortDirection direction) {
         int total = convoDao.getTotalConvosReceived(userId);
-        List<Convo> convos = convoDao.getConvosReceived(userId, offset, limit, order);
+        List<Convo> convos = convoDao.getConvosReceived(userId, offset, limit, direction);
         return new ConvosResponse(total, convos, offset,
-                String.format("/api/v1/%d/convos/received?offset=%d&limit=%d", userId, offset + limit, limit),
-                String.format("/api/v1/%d/convos/received?offset=%d&limit=%d", userId, Math.max(0, offset - limit), limit));
+                String.format("/api/v1/%d/convos/received?offset=%d&limit=%d&direction=%s", userId, offset + limit, limit, direction.getVal()),
+                String.format("/api/v1/%d/convos/received?offset=%d&limit=%d&direction=%s", userId, Math.max(0, offset - limit), limit, direction.getVal()));
     }
 
-    public ConvosResponse getConvosSent(final long userId, final int offset, final int limit, final SortDirection order) {
+    public ConvosResponse getConvosSent(final long userId, final int offset, final int limit, final SortDirection direction) {
         int total = convoDao.getTotalConvosSent(userId);
-        List<Convo> convos = convoDao.getConvosSent(userId, offset, limit, order);
+        List<Convo> convos = convoDao.getConvosSent(userId, offset, limit, direction);
         return new ConvosResponse(total, convos, offset,
-                String.format("/api/v1/%d/convos/sent?offset=%d&limit=%d", userId, offset + limit, limit),
-                String.format("/api/v1/%d/convos/sent?offset=%d&limit=%d", userId, Math.max(0, offset - limit), limit));
+                String.format("/api/v1/%d/convos/sent?offset=%d&limit=%d&direction=%s", userId, offset + limit, limit, direction.getVal()),
+                String.format("/api/v1/%d/convos/sent?offset=%d&limit=%d&direction=%s", userId, Math.max(0, offset - limit), limit, direction.getVal()));
     }
 
-    public ThreadsResponse getThreads(final long userId, final int offset, final int limit, final SortDirection order) {
+    public ThreadsResponse getThreads(final long userId, final int offset, final int limit, final SortDirection direction) {
         int total = convoDao.getTotalThreads(userId);
-        List<Convo> convos = convoDao.getThreads(userId, offset, limit, order);
+        List<Convo> convos = convoDao.getThreads(userId, offset, limit, direction);
         return new ThreadsResponse(total, convos, offset,
-                String.format("/api/v1/%d/threads?offset=%d&limit=%d", userId, offset + limit, limit),
-                String.format("/api/v1/%d/threads?offset=%d&limit=%d", userId, Math.max(0, offset - limit), limit));
+                String.format("/api/v1/%d/threads?offset=%d&limit=%d&direction=%s", userId, offset + limit, limit, direction.getVal()),
+                String.format("/api/v1/%d/threads?offset=%d&limit=%d&direction=%s", userId, Math.max(0, offset - limit), limit, direction.getVal()));
     }
 
     public void deleteThread(final long userId, final long threadId) {
         convoDao.deleteThread(userId, threadId);
     }
 
-    public ConvosResponse getThread(final long userId, final long threadId, final int offset, final int limit, final SortDirection order)
+    public ConvosResponse getThread(final long userId, final long threadId, final int offset, final int limit, final SortDirection direction)
     {
         int total = convoDao.getTotalInThread(userId, threadId);
-        List<Convo> convos = convoDao.getThread(userId, threadId, offset, limit, order);
+        List<Convo> convos = convoDao.getThread(userId, threadId, offset, limit, direction);
         return new ConvosResponse(total, convos, offset,
-                String.format("/api/v1/%d/threads/%d?offset=%d&limit=%d", userId, threadId, offset + limit, limit),
-                String.format("/api/v1/%d/threads/%d?offset=%d&limit=%d", userId, threadId, Math.max(0, offset - limit), limit));
+                String.format("/api/v1/%d/threads/%d?offset=%d&limit=%d&direction=%s", userId, threadId, offset + limit, limit, direction.getVal()),
+                String.format("/api/v1/%d/threads/%d?offset=%d&limit=%d&direction=%s", userId, threadId, Math.max(0, offset - limit), limit, direction.getVal()));
     }
 }
