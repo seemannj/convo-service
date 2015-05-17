@@ -6,23 +6,23 @@ Service for coding assignment. Manages messages between users.
 CREATE SEQUENCE 'thread_seq' START AT 1;
 
 CREATE TABLE convo.convo(
-  id bigserial PRIMARY KEY,
-  sender bigint NOT NULL REFERENCES users(id),
-  recipient bigint NOT NULL REFERENCES users(id),
-  subject varchar(140) NOT NULL,
-  body text NOT NULL,
-  was_read boolean NOT NULL default false,
-  thread_id bigint,
-  reply_to_convo bigint REFERENCES convo.convo(id),
-  send_time timestamp NOT NULL DEFAULT now(),
-  update_time timestamp,
-  deleted_by_sender boolean NOT NULL DEFAULT false,
-  deleted_by_recipient boolean NOT NULL DEFAULT false
+  * id bigserial PRIMARY KEY,
+  * sender bigint NOT NULL REFERENCES users(id),
+  * recipient bigint NOT NULL REFERENCES users(id),
+  * subject varchar(140) NOT NULL,
+  * body text NOT NULL,
+  * was_read boolean NOT NULL default false,
+  * thread_id bigint,
+  * reply_to_convo bigint REFERENCES convo.convo(id),
+  * send_time timestamp NOT NULL DEFAULT now(),
+  * update_time timestamp,
+  * deleted_by_sender boolean NOT NULL DEFAULT false,
+  * deleted_by_recipient boolean NOT NULL DEFAULT false
 );
 
-CREATE INDEX convo_sender_idx ON convo.convo (sender);
-CREATE INDEX convo_recipient_idx ON convo.convo (recipient);
-CREATE INDEX convo_thread_id_idx ON convo.convo (thread_id);
+* CREATE INDEX convo_sender_idx ON convo.convo (sender);
+* CREATE INDEX convo_recipient_idx ON convo.convo (recipient);
+* CREATE INDEX convo_thread_id_idx ON convo.convo (thread_id);
 
 This was designed and implemented using PostgreSQL, the DB I'm most familiar with at my current job, and which I've found very versatile. "Convos" are the main entities we want to manage, so we need a table to encapsulate them. A convo consists of:
 * ID, a unique PRIMARY KEY, long (bigint) type, managed by a DB sequence (bigserial covers that)
