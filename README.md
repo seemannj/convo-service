@@ -22,7 +22,7 @@ Service for coding assignment. Manages messages between users.
   *  updateTime: Last time the convo was updated. Currently, only update operation is changing the wasRead flag.
   *  replyToConvo: ID of the convo that this convo is in reply to.
 
-* POST /api/v1/convos
+* POST */api/v1/convos*
   *  Create a new convo.
   *  Params:
     *  Body: {"sender": {sender_user_id}, "recipient": {recipient_user_id}, "subject": "subject goes here", "body": "body goes here"}
@@ -30,7 +30,7 @@ Service for coding assignment. Manages messages between users.
   *  Returns:
     *  Unique ID for the newly created convo, as a long.
 
-* POST /api/v1/convos/{convoId}/replies
+* POST */api/v1/convos/{convoId}/replies*
   *  Reply to an existing convo. New convo will be part of the same "thread", and will have the same subject as the convo being replied to.
   *  Params:
     *  convoId: Unique ID of the convo being replied to, as a long.
@@ -38,7 +38,7 @@ Service for coding assignment. Manages messages between users.
   *  Returns:
     *  Unique ID for the newly created convo, as a long.
 
-* GET /api/v1/{userId}/convos/sent
+* GET */api/v1/{userId}/convos/sent*
   *  Get all convos sent by the given user ID, ordered by send time.
   *  Params:
     *  userId: Unique ID of a user.
@@ -53,7 +53,7 @@ Service for coding assignment. Manages messages between users.
       *  next: Path that will result in the next set of convos, using the given limit and direction, offset = givenOffset + limit.
       *  previous: Path that will result the previous set of convos, using the given limit and direction, offset = givenOffset - limit (lower bound 0).
 
-* GET /api/v1/{userId}/convos/received
+* GET */api/v1/{userId}/convos/received*
   *  Get all convos received by the given user ID, ordered by send time.
   *  Params:
     *  userId: Unique ID of a user.
@@ -68,7 +68,7 @@ Service for coding assignment. Manages messages between users.
       *  next: Path that will result in the next set of convos, using the given limit and direction, offset = givenOffset + limit.
       *  previous: Path that will result the previous set of convos, using the given limit and direction, offset = givenOffset - limit (lower bound 0).
 
-* GET /api/v1/{userId}/convos/sent/{convoId}
+* GET */api/v1/{userId}/convos/sent/{convoId}*
   *  Get an individual convo that was sent by the given user, with the given ID.
   *  Params:
     *  userId: User that sent the convo
@@ -76,7 +76,7 @@ Service for coding assignment. Manages messages between users.
   *  Returns:
     *  The requested convo object, or 404 if it does not exist.
 
-* GET /api/v1/{userId}/convos/received/{convoId}
+* GET */api/v1/{userId}/convos/received/{convoId}*
   *  Get an individual convo that was received by the given user, with the given ID.
   *  Params:
     *  userId: User that received the convo
@@ -84,7 +84,7 @@ Service for coding assignment. Manages messages between users.
   *  Returns:
     *  The requested convo object, or 404 if it does not exist.
 
-* DELETE /api/v1/{userId}/convos/{convoId}
+* DELETE */api/v1/{userId}/convos/{convoId}*
   *  Mark the given convo as deleted by the given user. That convo will no longer appear in that user's sent or received responses, and cannot be un-deleted.
   *  Params:
     *  userId: User that sent or received the convo.
@@ -92,7 +92,7 @@ Service for coding assignment. Manages messages between users.
   *  Returns:
     *  No Content. 200 response if successful.
 
-* PUT /api/v1/{userId}/convos/received/{convoId}
+* PUT */api/v1/{userId}/convos/received/{convoId}*
   *  Toggle the "wasRead" flag of the given convo received by the given user. If "wasRead" was true, it is set to false, set to true otherwise.
   *  Params:
     *  userId: User who received the convo.
@@ -100,7 +100,7 @@ Service for coding assignment. Manages messages between users.
   *  Returns:
     *  No Content. 200 response if successul.
 
-* GET /api/v1/{userId}/threads
+* GET */api/v1/{userId}/threads*
   *  Get all threads for a user, in the form of a list of the most recent convos from each of the threads.
   *  Params:
     *  userId: Unique ID of a user.
@@ -115,7 +115,7 @@ Service for coding assignment. Manages messages between users.
       *  next: Path that will result in the next set of threads, using the given limit and direction, offset = givenOffset + limit.
       *  previous: Path that will result the previous set of threads, using the given limit and direction, offset = givenOffset - limit (lower bound 0).
 
-* GET /api/v1/{userId}/threads/{threadId}
+* GET */api/v1/{userId}/threads/{threadId}*
   *  Get convos from one thread in a users inbox. Convos are ordered by send-time, default descending.
   *  Params:
     *  userId: Unique ID of a user.
@@ -131,7 +131,7 @@ Service for coding assignment. Manages messages between users.
       *  next: Path that will result in the next set of convos, using the given limit and direction, offset = givenOffset + limit.
       *  previous: Path that will result the previous set of convos, using the given limit and direction, offset = givenOffset - limit (lower bound 0).
 
-* DELETE /api/v1/{userId}/threads/{threadId}
+* DELETE */api/v1/{userId}/threads/{threadId}*
   *  Delete all convos in the given thread for the given user. All convos in the thread will not appear in the sent or received responses for the user, and cannot be undeleted.
   *  Params:
     *  userId: Unique ID for a user, recipient or sender for the convos we want deleted.
