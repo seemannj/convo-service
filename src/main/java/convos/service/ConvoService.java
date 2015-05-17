@@ -58,8 +58,8 @@ public class ConvoService
      * Switch convo from read to un-read, whichever one it is not, based on ID.
      * @param id Unique id of the convo
      */
-    public void changeConvoReadStatus(final long id) {
-        convoDao.changeConvoReadStatus(id);
+    public void changeConvoReadStatus(final long userId, final long id) {
+        convoDao.changeConvoReadStatus(userId, id);
     }
 
     /**

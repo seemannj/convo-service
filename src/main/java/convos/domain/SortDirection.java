@@ -1,5 +1,6 @@
 package convos.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum SortDirection
@@ -18,5 +19,15 @@ public enum SortDirection
     public String getVal()
     {
         return val;
+    }
+
+    @JsonCreator
+    public static SortDirection fromJson(String val) {
+        for (SortDirection d : SortDirection.values()) {
+            if (d.getVal().equals(val)) {
+                return d;
+            }
+        }
+        throw new IllegalArgumentException("Invalid sort direction.");
     }
 }

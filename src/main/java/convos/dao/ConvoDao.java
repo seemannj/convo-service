@@ -2,11 +2,11 @@ package convos.dao;
 
 import com.google.common.collect.ImmutableMap;
 import convos.domain.Convo;
-import convos.domain.ConvosResponse;
 import convos.domain.CreateConvo;
 import convos.domain.SortDirection;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -68,7 +68,7 @@ public class ConvoDao
                     "id", (Object)convoId,
                     "userId", userId
                 );
-        return jdbcTemplate.queryForObject(sql, params, convoMapper);
+        return DataAccessUtils.singleResult(jdbcTemplate.query(sql, params, convoMapper));
     }
 
     /**
@@ -90,7 +90,7 @@ public class ConvoDao
                     "id", (Object)convoId,
                     "userId", userId
                 );
-        return jdbcTemplate.queryForObject(sql, params, convoMapper);
+        return DataAccessUtils.singleResult(jdbcTemplate.query(sql, params, convoMapper));
     }
 
     /**
@@ -107,11 +107,11 @@ public class ConvoDao
                 "INSERT INTO convo.convo(sender, recipient, subject, body, thread_id, reply_to_convo) " +
                 "VALUES (:sender, :recipient, " +
                         "COALESCE(" +
-                        "   (SELECT subject FROM convo.convo where id = :replyToConvo AND NOT deleted), " +
+                        "   (SELECT subject FROM convo.convo where id = :replyToConvo), " +
                         "   :subject), " +
                         ":body, " +
                         "COALESCE(" +
-                        "   (SELECT thread_id FROM convo.convo where id = :replyToConvo AND NOT deleted), " +
+                        "   (SELECT thread_id FROM convo.convo where id = :replyToConvo), " +
                         "   nextval('thread_seq')), " +
                         "CASE WHEN :replyToConvo = 0 THEN null ELSE :replyToConvo END) " +
                 "RETURNING id";
@@ -132,12 +132,12 @@ public class ConvoDao
      * Switch convo from read to un-read, whichever one it is not, based on ID.
      * @param id Unique id of the convo
      */
-    public void changeConvoReadStatus(final long id) {
+    public void changeConvoReadStatus(final long userId, final long id) {
         final String sql =
                 "UPDATE convo.convo SET was_read = not was_read, update_time = now() " +
-                "WHERE id = :id";
+                "WHERE id = :id AND recipient = :userId ";
         final Map<String, Object> params =
-                ImmutableMap.of("id", (Object)id);
+                ImmutableMap.of("id", (Object)id, "userId", userId);
 
         jdbcTemplate.update(sql, params);
     }
@@ -185,12 +185,12 @@ public class ConvoDao
                 "SELECT id, sender, recipient, subject, body, was_read, thread_id, reply_to_convo," +
                         "send_time, update_time " +
                         "FROM convo.convo " +
-                        "WHERE recipient = :userId AND NOT deleted_by_recipient ";
+                        "WHERE recipient = :userId AND NOT deleted_by_recipient " +
+                        "ORDER BY send_time " + direction.getVal();
         if (limit > 0) {
-            sql += "LIMIT :limit ";
+            sql += " LIMIT :limit ";
         }
-        sql += "OFFSET :offset " +
-               "ORDER BY send_time " + direction.getVal();
+        sql += " OFFSET :offset ";
 
         final Map<String, Object> params =
                 ImmutableMap.of(
@@ -228,12 +228,12 @@ public class ConvoDao
                 "SELECT id, sender, recipient, subject, body, was_read, thread_id, reply_to_convo," +
                         "send_time, update_time " +
                         "FROM convo.convo " +
-                        "WHERE sender = :userId AND NOT deleted_by_sender ";
+                        "WHERE sender = :userId AND NOT deleted_by_sender " +
+                        "ORDER BY send_time " + direction.getVal();
         if (limit > 0) {
-            sql += "LIMIT :limit ";
+            sql += " LIMIT :limit ";
         }
-        sql += "OFFSET :offset " +
-                "ORDER BY send_time " + direction.getVal();
+        sql += " OFFSET :offset ";
 
         final Map<String, Object> params =
                 ImmutableMap.of(
@@ -271,12 +271,12 @@ public class ConvoDao
                 "SELECT DISTINCT ON (thread_id) id, sender, recipient, subject, body, was_read, thread_id, reply_to_convo," +
                         "send_time, update_time " +
                         "FROM convo.convo " +
-                        "WHERE (sender = :userId AND NOT deleted_by_sender) OR (recipient = :userId AND NOT deleted_by_recipient) ";
+                        "WHERE (sender = :userId AND NOT deleted_by_sender) OR (recipient = :userId AND NOT deleted_by_recipient) " +
+                        "ORDER BY " + direction.getVal();
         if (limit > 0) {
-            sql += "LIMIT :limit ";
+            sql += " LIMIT :limit ";
         }
-        sql += "OFFSET :offset " +
-                "ORDER BY send_time " + direction.getVal();
+        sql += " OFFSET :offset ";
 
         final Map<String, Object> params =
                 ImmutableMap.of(
@@ -318,12 +318,12 @@ public class ConvoDao
                 "SELECT id, sender, recipient, subject, body, was_read, thread_id, reply_to_convo," +
                         "send_time, update_time " +
                         "FROM convo.convo " +
-                        "WHERE thread_id = :threadId AND ((sender = :userId AND NOT deleted_by_sender) OR (recipient = :userId AND NOT deleted_by_recipient)) ";
+                        "WHERE thread_id = :threadId AND ((sender = :userId AND NOT deleted_by_sender) OR (recipient = :userId AND NOT deleted_by_recipient)) " +
+                        "ORDER BY send_time " + direction.getVal();
         if (limit > 0) {
-            sql += "LIMIT :limit ";
+            sql += " LIMIT :limit ";
         }
-        sql += "OFFSET :offset " +
-                "ORDER BY send_time " + direction.getVal();
+        sql += " OFFSET :offset ";
 
         final Map<String, Object> params =
                 ImmutableMap.of(
